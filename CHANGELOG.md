@@ -7,13 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - YYYY-MM-DD
+## [0.1.0] - 2026-05-08
 
 ### Added
-- One-click `Funnel DE` button on the Send Mail tab.
-- Eligibility scan for current-expansion BoE and Warbound-until-equipped armor and weapons.
-- Per-realm recipient stored via AceDB; first-click prompt sets the recipient.
-- Per-quality toggles (Uncommon / Rare / Epic).
-- Minimap launcher via LibDBIcon.
-- Slash commands `/defunnel` (open settings) and `/defunnel set <name>` (set recipient).
-- Localization scaffold for deDE, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW.
+- `Funnel DE` button on the Send Mail tab.
+- Funnels current-expansion BoE and Warbound-until-equipped armor and weapons.
+- Per-realm recipient with a dropdown of characters you've logged into.
+- "Use this character for this realm" button.
+- "Include warbound items" toggle for cross-account recipients.
+- Quality filters (Uncommon / Rare / Epic).
+- Auto-funnel when the Send Mail tab opens (optional).
+- Open mailbox straight to Send Mail (optional).
+- Minimap launcher.
+- Slash commands `/defunnel` and `/defunnel set <name>`.
+- Localization scaffold for 10 non-English locales.

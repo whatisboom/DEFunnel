@@ -9,3 +9,6 @@ Libs/
 
 # Packager output
 .release/
+
+# Local agent guidance, not for distribution
+CLAUDE.md

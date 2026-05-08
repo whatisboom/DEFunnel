@@ -1,3 +1,3 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("DEFunnel", "ruRU")
 if not L then return end
--- Translations welcome via PR.
+-- Переводы приветствуются через запрос на слияние.

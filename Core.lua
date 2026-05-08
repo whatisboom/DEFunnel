@@ -10,8 +10,12 @@ local LDB = LibStub("LibDataBroker-1.1")
 local LDBIcon = LibStub("LibDBIcon-1.0")
 
 local defaults = {
+    global = {
+        realms = {},
+    },
     realm = {
         recipient = "",
+        includeWarbound = true,
     },
     profile = {
         qualities = {
@@ -19,6 +23,8 @@ local defaults = {
             [3] = true,  -- Rare
             [4] = true,  -- Epic
         },
+        autoFunnel = false,
+        openToSendMail = false,
         minimap = {
             hide = false,
         },
@@ -64,8 +70,19 @@ function DEFunnel:OnInitialize()
 end
 
 function DEFunnel:OnEnable()
+    self:StampSelf()
+
     self:RegisterEvent("MAIL_SHOW", function()
         if self.MailFrame then self.MailFrame:OnShow() end
+        if self.db.profile.openToSendMail then
+            -- Defer one frame so MailFrame finishes its own init before
+            -- we click a tab on it.
+            C_Timer.After(0, function()
+                if _G.MailFrame and _G.MailFrame:IsShown() and MailFrameTab2 then
+                    MailFrameTab2:Click()
+                end
+            end)
+        end
     end)
     self:RegisterEvent("MAIL_CLOSED", function()
         if self.MailFrame then self.MailFrame:OnClose() end
@@ -95,6 +112,38 @@ function DEFunnel:OpenOptions()
     if self.Options and self.Options.Open then
         self.Options:Open()
     end
+end
+
+-- Stamp the current character into the global per-realm character list so
+-- the recipient dropdown can offer them as a known alt later.
+function DEFunnel:StampSelf()
+    local realm = GetRealmName()
+    local name = UnitName("player")
+    if not realm or not name or realm == "" or name == "" then return end
+    self.db.global.realms[realm] = self.db.global.realms[realm] or {}
+    self.db.global.realms[realm][name] = true
+end
+
+-- Returns a sorted array of known character names on the current realm,
+-- including the current character (which is stamped on enable).
+function DEFunnel:GetKnownAlts()
+    local realmTable = self.db.global.realms[GetRealmName()]
+    local alts = {}
+    if realmTable then
+        for name in pairs(realmTable) do
+            alts[#alts + 1] = name
+        end
+    end
+    table.sort(alts)
+    return alts
+end
+
+-- True if `name` is a tracked character on the current realm (i.e., in the
+-- player's Warband as far as this addon knows).
+function DEFunnel:IsKnownAlt(name)
+    if not name or name == "" then return false end
+    local realmTable = self.db.global.realms[GetRealmName()]
+    return realmTable and realmTable[name] == true or false
 end
 
 function DEFunnel:RefreshMinimap()

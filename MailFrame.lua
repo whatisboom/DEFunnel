@@ -63,7 +63,7 @@ local function ClassifyBind(bag, slot)
     return isBoE, isWarbound, isSoulbound
 end
 
-local function IsEligible(bag, slot, info, qualities, currentExpac)
+local function IsEligible(bag, slot, info, qualities, currentExpac, allowWarbound)
     if not info or not info.itemID then return false end
     if not qualities[info.quality or 0] then return false end
 
@@ -79,6 +79,7 @@ local function IsEligible(bag, slot, info, qualities, currentExpac)
 
     local isBoE, isWarbound, isSoulbound = ClassifyBind(bag, slot)
     if isSoulbound then return false end
+    if isWarbound and not allowWarbound then return false end
     if not (isBoE or isWarbound) then return false end
 
     return true
@@ -87,13 +88,14 @@ end
 function MailFrame:ScanBags()
     local qualities = DEFunnel.db.profile.qualities
     local currentExpac = GetExpansionLevel()
+    local allowWarbound = DEFunnel.db.realm.includeWarbound and true or false
     local results = {}
 
     for bag = 0, TOTAL_BAGS do
         local numSlots = C_Container.GetContainerNumSlots(bag) or 0
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)
-            if info and IsEligible(bag, slot, info, qualities, currentExpac) then
+            if info and IsEligible(bag, slot, info, qualities, currentExpac, allowWarbound) then
                 results[#results + 1] = { bag = bag, slot = slot }
             end
         end
@@ -114,17 +116,22 @@ function MailFrame:OnShow()
         btn:SetSize(120, 22)
         btn:SetFrameStrata("HIGH")
         btn:SetFrameLevel((MailFrameTab1 and MailFrameTab1:GetFrameLevel() or 0) + 10)
-        -- Anchor to the right of the "Send Mail" tab so we don't overlap tabs.
-        if MailFrameTab2 then
-            btn:SetPoint("LEFT", MailFrameTab2, "RIGHT", 6, 0)
-        elseif SendMailFrame then
-            btn:SetPoint("TOPRIGHT", SendMailFrame, "BOTTOMRIGHT", 0, -6)
-        end
+        -- Initial fallback anchor; replaced in SendMailFrame:OnShow once
+        -- frame coordinates are valid.
+        btn:SetPoint("TOPRIGHT", SendMailFrame, "BOTTOMRIGHT", 0, -6)
 
-        -- Only show on the Send Mail tab.
+        -- Only show on the Send Mail tab. Also drives the auto-funnel trigger.
         if SendMailFrame then
-            SendMailFrame:HookScript("OnShow", function() if MailFrame.button then MailFrame.button:Show() end end)
-            SendMailFrame:HookScript("OnHide", function() if MailFrame.button then MailFrame.button:Hide() end end)
+            SendMailFrame:HookScript("OnShow", function()
+                if MailFrame.button then
+                    MailFrame:Reposition()
+                    MailFrame.button:Show()
+                end
+                MailFrame:AutoFunnelIfReady()
+            end)
+            SendMailFrame:HookScript("OnHide", function()
+                if MailFrame.button then MailFrame.button:Hide() end
+            end)
         end
         btn:SetText(DEFunnel.L["FUNNEL_BUTTON"])
         btn:SetScript("OnClick", function() MailFrame:OnFunnelClick() end)
@@ -140,10 +147,28 @@ function MailFrame:OnShow()
     end
 end
 
+function MailFrame:Reposition()
+    local btn = self.button
+    local parent = _G.MailFrame
+    if not btn or not parent or not MailFrameTab2 then return end
+    local tabTop, tabHeight = MailFrameTab2:GetTop(), MailFrameTab2:GetHeight()
+    local frameBottom = parent:GetBottom()
+    if not tabTop or not tabHeight or not frameBottom then return end
+    local yOffset = (tabTop - tabHeight / 2) - frameBottom
+    btn:ClearAllPoints()
+    btn:SetPoint("RIGHT", parent, "BOTTOMRIGHT", 0, yOffset)
+end
+
 function MailFrame:OnClose()
     if self.button then
         self.button:Hide()
     end
+end
+
+local function IsSelf(recipient)
+    if not recipient or recipient == "" then return false end
+    local player = UnitName("player")
+    return player and player:lower() == recipient:lower()
 end
 
 function MailFrame:OnFunnelClick()
@@ -152,6 +177,11 @@ function MailFrame:OnFunnelClick()
     local recipient = DEFunnel.db.realm.recipient
     if not recipient or recipient == "" then
         self:PromptRecipient()
+        return
+    end
+
+    if IsSelf(recipient) then
+        DEFunnel:Print(DEFunnel.L["IS_SELF"])
         return
     end
 
@@ -191,6 +221,26 @@ function MailFrame:Funnel()
     end
 
     step(1)
+end
+
+-- Fires from SendMailFrame:OnShow when the user enables autoFunnel.
+-- Guards: recipient set, eligible items present, and the To: editbox isn't
+-- mid-compose to someone else (empty, or already our recipient).
+function MailFrame:AutoFunnelIfReady()
+    if not DEFunnel.db.profile.autoFunnel then return end
+
+    local recipient = DEFunnel.db.realm.recipient
+    if not recipient or recipient == "" then return end
+    if IsSelf(recipient) then return end
+
+    if SendMailNameEditBox then
+        local current = SendMailNameEditBox:GetText() or ""
+        if current ~= "" and current ~= recipient then return end
+    end
+
+    if #self:ScanBags() == 0 then return end
+
+    self:Funnel()
 end
 
 function MailFrame:PromptRecipient()
