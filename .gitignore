@@ -1,0 +1,11 @@
+# Libraries are fetched at release time by the BigWigs packager.
+Libs/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Packager output
+.release/

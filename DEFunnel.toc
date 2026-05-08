@@ -1,0 +1,14 @@
+## Interface: 120005
+## Title: DEFunnel
+## Notes: Auto-funnel disenchantable gear to your enchanter alt
+## Author: Brandon
+## Version: @project-version@
+## SavedVariables: DEFunnelDB
+## X-Curse-Project-ID:
+## IconTexture: Interface\Icons\INV_Enchant_Disenchant
+
+embeds.xml
+Locales\Locales.xml
+Core.lua
+MailFrame.lua
+Options.lua
