@@ -9,7 +9,7 @@ Built for **World of Warcraft: Midnight (retail, patch 12.0.5)**.
 ## Features
 
 - Adds a **Funnel DE** button to the Send Mail tab.
-- Scans your bags (including the reagent bag) and attaches up to 12 eligible items per click.
+- Scans your regular bags and attaches up to 12 eligible items per click.
 - Eligibility rules:
   - Quality at or above your configured minimum (default: Uncommon).
   - Bind on Equip *or* Warbound-until-equipped.

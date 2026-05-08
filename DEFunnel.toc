@@ -4,7 +4,7 @@
 ## Author: Brandon
 ## Version: @project-version@
 ## SavedVariables: DEFunnelDB
-## X-Curse-Project-ID:
+## X-Curse-Project-ID: 1536948
 ## IconTexture: Interface\Icons\INV_Enchant_Disenchant
 
 embeds.xml
