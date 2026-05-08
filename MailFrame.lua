@@ -85,6 +85,18 @@ local function IsEligible(bag, slot, info, qualities, currentExpac, allowWarboun
     return true
 end
 
+local function IsSelf(recipient)
+    if not recipient or recipient == "" then return false end
+    local player = UnitName("player")
+    return player and player:lower() == recipient:lower() or false
+end
+
+local function ShouldShow()
+    if not SendMailFrame or not SendMailFrame:IsShown() then return false end
+    if IsSelf(DEFunnel.db.realm.recipient) then return false end
+    return true
+end
+
 function MailFrame:ScanBags()
     local qualities = DEFunnel.db.profile.qualities
     local currentExpac = GetExpansionLevel()
@@ -125,7 +137,7 @@ function MailFrame:OnShow()
             SendMailFrame:HookScript("OnShow", function()
                 if MailFrame.button then
                     MailFrame:Reposition()
-                    MailFrame.button:Show()
+                    if ShouldShow() then MailFrame.button:Show() else MailFrame.button:Hide() end
                 end
                 MailFrame:AutoFunnelIfReady()
             end)
@@ -135,16 +147,24 @@ function MailFrame:OnShow()
         end
         btn:SetText(DEFunnel.L["FUNNEL_BUTTON"])
         btn:SetScript("OnClick", function() MailFrame:OnFunnelClick() end)
+
+        -- Throttled visibility re-check so recipient changes from any source
+        -- (Options panel, /df set, popup) toggle the button without setter
+        -- callbacks. Hooked on the parent (always shown while the mailbox
+        -- is open) so it fires regardless of the button's own visibility.
+        parent.defunnelElapsed = 0
+        parent:HookScript("OnUpdate", function(self, dt)
+            self.defunnelElapsed = (self.defunnelElapsed or 0) + dt
+            if self.defunnelElapsed < 0.25 then return end
+            self.defunnelElapsed = 0
+            if not MailFrame.button then return end
+            if ShouldShow() then MailFrame.button:Show() else MailFrame.button:Hide() end
+        end)
         self.button = btn
     end
 
     self.button:SetText(DEFunnel.L["FUNNEL_BUTTON"])
-    -- Match initial visibility to the active tab.
-    if SendMailFrame and SendMailFrame:IsShown() then
-        self.button:Show()
-    else
-        self.button:Hide()
-    end
+    if ShouldShow() then self.button:Show() else self.button:Hide() end
 end
 
 function MailFrame:Reposition()
@@ -163,12 +183,6 @@ function MailFrame:OnClose()
     if self.button then
         self.button:Hide()
     end
-end
-
-local function IsSelf(recipient)
-    if not recipient or recipient == "" then return false end
-    local player = UnitName("player")
-    return player and player:lower() == recipient:lower()
 end
 
 function MailFrame:OnFunnelClick()
