@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-08
+
+### Changed
+- The Funnel DE button is now hidden on the character configured as the realm's recipient. Visibility updates live if the recipient is changed in-session from any source (Options panel, `/df set`, or the recipient popup).
+
 ## [0.1.0] - 2026-05-08
 
 ### Added
