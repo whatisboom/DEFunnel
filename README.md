@@ -1,10 +1,20 @@
 # DEFunnel
 
+[![CurseForge](https://img.shields.io/curseforge/dt/1536948?label=CurseForge&logo=curseforge)](https://www.curseforge.com/wow/addons/defunnel)
+[![GitHub release](https://img.shields.io/github/v/release/whatisboom/DEFunnel)](https://github.com/whatisboom/DEFunnel/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Auto-funnel disenchantable gear to your enchanter alt. One click on the Send Mail frame attaches every eligible BoE and Warbound-until-equipped armor or weapon piece from the current expansion to a mail addressed to your designated alt.
+**For enchanters with alt-funnel workflows: stop dragging BoEs into mail one at a time.**
+
+DEFunnel adds a single button to the Send Mail frame that auto-attaches every eligible disenchantable gear piece in your bags to a mail addressed to your designated enchanter alt. Set the recipient once per realm; one click per stack of 12.
 
 Built for **World of Warcraft: Midnight (retail, patch 12.0.5)**.
+
+## Why DEFunnel
+
+- **Purpose-built for the DE pipeline.** General mail addons (Postal, Mail-Service-Reborn, etc.) are great at bulk mail, but you still hand-pick what to attach. DEFunnel knows what "disenchantable" means and only grabs that.
+- **Filters by current expansion + bind state.** Won't grab a stray heirloom, won't grab last-expansion gear you forgot to vendor, won't grab anything already soulbound.
+- **Warbound-until-equipped aware.** Cross-checks `C_Item.IsBoundToAccountUntilEquip` so Warband gear funnels correctly, even when the tooltip text is ambiguous.
 
 ## Features
 
@@ -18,7 +28,7 @@ Built for **World of Warcraft: Midnight (retail, patch 12.0.5)**.
   - Item class is Armor or Weapon.
 - Per-realm recipient — set once per realm and forget.
 - Minimap launcher (toggleable).
-- Localization scaffolding for 11 locales (translations welcome via PR).
+- Localization scaffolding for 11 locales (translations welcome — see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## Installation
 
@@ -50,6 +60,10 @@ Available options:
 
 - `/defunnel` — opens settings.
 - `/defunnel set <name>` — sets the recipient for the current realm.
+
+## Contributing
+
+Bug reports, feature ideas, and locale translations are all welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) — adding a translation is roughly a 4-line PR.
 
 ## License
 
