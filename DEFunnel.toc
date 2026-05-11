@@ -12,3 +12,4 @@ Locales\Locales.xml
 Core.lua
 MailFrame.lua
 Options.lua
+Skins\ElvUI.lua
