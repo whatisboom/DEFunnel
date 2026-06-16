@@ -1,4 +1,4 @@
-## Interface: 120005
+## Interface: 120007
 ## Title: DEFunnel
 ## Notes: Auto-funnel disenchantable gear to your enchanter alt
 ## Author: Brandon

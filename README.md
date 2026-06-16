@@ -8,7 +8,7 @@
 
 DEFunnel adds a single button to the Send Mail frame that auto-attaches every eligible disenchantable gear piece in your bags to a mail addressed to your designated enchanter alt. Set the recipient once per realm; one click per stack of 12.
 
-Built for **World of Warcraft: Midnight (retail, patch 12.0.5)**.
+Built for **World of Warcraft: Midnight (retail, patch 12.0.7)**.
 
 ## Why DEFunnel
 

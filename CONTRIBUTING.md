@@ -6,7 +6,7 @@ Thanks for your interest. This is a small addon — most contributions are easy 
 
 Open a [GitHub issue](https://github.com/whatisboom/DEFunnel/issues). Helpful info:
 
-- WoW client version (e.g. retail 12.0.5).
+- WoW client version (e.g. retail 12.0.7).
 - DEFunnel version (settings panel header, or the release tag you installed).
 - What you did, what happened, what you expected.
 - Any errors from `/console scriptErrors 1` or BugSack.
