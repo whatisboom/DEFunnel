@@ -5,3 +5,8 @@ license-output: LICENSE
 
 # Ace3 + LibDataBroker/LibDBIcon are no longer vendored here -- they're
 # provided by BoomForge (## RequiredDeps: BoomForge in DEFunnel.toc).
+
+ignore:
+  - scripts
+  - tests
+  - CLAUDE.md

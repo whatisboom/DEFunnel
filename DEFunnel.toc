@@ -10,5 +10,6 @@
 
 Locales\Locales.xml
 Core.lua
+Eligibility.lua
 MailFrame.lua
 Options.lua

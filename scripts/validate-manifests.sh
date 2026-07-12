@@ -58,7 +58,7 @@ while IFS= read -r xml; do
   done < <(grep -oE '(Script|Include)[[:space:]]+file="[^"]+"' "$xml" | sed -E 's/.*file="([^"]+)".*/\1/')
 done < <(find . -name "*.xml" -not -path "./Libs/*" -not -path "./.git/*" | sed 's|^\./||')
 
-# ---- 3. orphan .lua check (exclude Libs/, .git/, scripts/) ----
+# ---- 3. orphan .lua check (exclude Libs/, .git/, scripts/, tests/) ----
 while IFS= read -r lua; do
   lua_norm="$(norm "$lua")"
   if ! grep -Fxq "$lua_norm" "$refs_file"; then
@@ -68,7 +68,8 @@ while IFS= read -r lua; do
 done < <(find . -name "*.lua" \
   -not -path "./Libs/*" \
   -not -path "./.git/*" \
-  -not -path "./scripts/*" | sed 's|^\./||')
+  -not -path "./scripts/*" \
+  -not -path "./tests/*" | sed 's|^\./||')
 
 if (( errors > 0 )); then
   echo ""

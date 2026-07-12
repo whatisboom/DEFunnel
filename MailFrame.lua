@@ -4,6 +4,8 @@ local DEFunnel = addonTable.DEFunnel or _G.DEFunnel
 local MailFrame = {}
 DEFunnel.MailFrame = MailFrame
 
+local Eligibility = DEFunnel.Eligibility
+
 -- Tunable: bump to 0.2 if items don't reliably attach in testing.
 local ATTACH_DELAY = 0.1
 local MAX_ATTACHMENTS = 12
@@ -11,10 +13,6 @@ local MAX_ATTACHMENTS = 12
 -- reagent bag at index 5 is intentionally excluded — armor/weapons can't go
 -- there.
 local TOTAL_BAGS = NUM_BAG_SLOTS or 4
-
--- Item class IDs (avoid LE_ITEM_CLASS_* removed in some builds).
-local CLASS_WEAPON = Enum and Enum.ItemClass and Enum.ItemClass.Weapon or 2
-local CLASS_ARMOR  = Enum and Enum.ItemClass and Enum.ItemClass.Armor  or 4
 
 -- Read tooltip line text for a bag slot. We rely on tooltip text rather than
 -- C_Item.IsBound* alone because BoE-vs-already-bound is only authoritative in
@@ -36,21 +34,7 @@ end
 
 local function ClassifyBind(bag, slot)
     local lines = GetTooltipLines(bag, slot)
-    local isBoE, isWarbound, isSoulbound = false, false, false
-    if lines then
-        for _, line in ipairs(lines) do
-            local text = line.leftText
-            if text then
-                if text == ITEM_BIND_ON_EQUIP then
-                    isBoE = true
-                elseif text == ITEM_ACCOUNTBOUND_UNTIL_EQUIP then
-                    isWarbound = true
-                elseif text == ITEM_SOULBOUND or text == ITEM_BIND_ON_PICKUP then
-                    isSoulbound = true
-                end
-            end
-        end
-    end
+    local isBoE, isWarbound, isSoulbound = Eligibility.ClassifyBindFromLines(lines)
 
     -- Cross-check warbound via the modern API.
     if not isWarbound and C_Item and C_Item.IsBoundToAccountUntilEquip then
@@ -65,24 +49,24 @@ end
 
 local function IsEligible(bag, slot, info, qualities, currentExpac, allowWarbound)
     if not info or not info.itemID then return false end
-    if not qualities[info.quality or 0] then return false end
 
     local _, _, _, _, _, classID = GetItemInfoInstant(info.itemID)
-    if classID ~= CLASS_WEAPON and classID ~= CLASS_ARMOR then return false end
-
     -- Expansion ID is the 15th return of GetItemInfo (1-indexed).
     local link = info.hyperlink
-    if not link then return false end
-    local expacID = select(15, GetItemInfo(link))
-    if expacID == nil then return false end
-    if expacID ~= currentExpac then return false end
-
+    local expacID = link and select(15, GetItemInfo(link)) or nil
     local isBoE, isWarbound, isSoulbound = ClassifyBind(bag, slot)
-    if isSoulbound then return false end
-    if isWarbound and not allowWarbound then return false end
-    if not (isBoE or isWarbound) then return false end
 
-    return true
+    return Eligibility.IsEligibleDecision({
+        quality = info.quality,
+        classID = classID,
+        expacID = expacID,
+        currentExpac = currentExpac,
+        isBoE = isBoE,
+        isWarbound = isWarbound,
+        isSoulbound = isSoulbound,
+        qualities = qualities,
+        allowWarbound = allowWarbound,
+    })
 end
 
 local function IsSelf(recipient)
