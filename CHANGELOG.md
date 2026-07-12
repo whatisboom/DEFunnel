@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-12
+
 ### Changed
 - Now depends on [BoomForge](https://github.com/whatisboom/BoomForge) (`## RequiredDeps: BoomForge`) for its Ace3/LibDataBroker/LibDBIcon libraries instead of vendoring its own copies. Requires BoomForge to be installed and enabled.
 
