@@ -32,6 +32,8 @@ local defaults = {
 }
 
 function DEFunnel:OnInitialize()
+    BoomForge:RegisterPlugin(self, { name = "DEFunnel", version = C_AddOns.GetAddOnMetadata(addonName, "Version") })
+
     self.db = AceDB:New("DEFunnelDB", defaults, true)
     self.L = AceLocale:GetLocale("DEFunnel")
     local L = self.L

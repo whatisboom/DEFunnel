@@ -6,8 +6,8 @@
 ## SavedVariables: DEFunnelDB
 ## X-Curse-Project-ID: 1536948
 ## IconTexture: Interface\Icons\INV_Enchant_Disenchant
+## RequiredDeps: BoomForge
 
-embeds.xml
 Locales\Locales.xml
 Core.lua
 MailFrame.lua
