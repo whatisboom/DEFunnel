@@ -21,14 +21,6 @@ local function GetTooltipLines(bag, slot)
     if not C_TooltipInfo or not C_TooltipInfo.GetBagItem then return nil end
     local data = C_TooltipInfo.GetBagItem(bag, slot)
     if not data then return nil end
-    if TooltipUtil and TooltipUtil.SurfaceArgs then
-        TooltipUtil.SurfaceArgs(data)
-        if data.lines then
-            for _, line in ipairs(data.lines) do
-                TooltipUtil.SurfaceArgs(line)
-            end
-        end
-    end
     return data.lines
 end
 
@@ -50,10 +42,10 @@ end
 local function IsEligible(bag, slot, info, qualities, currentExpac, allowWarbound)
     if not info or not info.itemID then return false end
 
-    local _, _, _, _, _, classID = GetItemInfoInstant(info.itemID)
-    -- Expansion ID is the 15th return of GetItemInfo (1-indexed).
+    local _, _, _, _, _, classID = C_Item.GetItemInfoInstant(info.itemID)
+    -- Expansion ID is the 15th return of C_Item.GetItemInfo (1-indexed).
     local link = info.hyperlink
-    local expacID = link and select(15, GetItemInfo(link)) or nil
+    local expacID = link and select(15, C_Item.GetItemInfo(link)) or nil
     local isBoE, isWarbound, isSoulbound = ClassifyBind(bag, slot)
 
     return Eligibility.IsEligibleDecision({

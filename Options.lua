@@ -8,11 +8,12 @@ local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Wrap a string in the Blizzard quality color escape so the label reads
--- in its native quality color (green/blue/purple).
+-- in its native quality color (green/blue/purple), honoring any color
+-- overrides the player has set.
 local function ColorByQuality(quality, text)
-    local hex = select(4, GetItemQualityColor(quality))
-    if hex then
-        return "|c" .. hex .. text .. "|r"
+    local colorData = ColorManager.GetColorDataForItemQuality(quality)
+    if colorData then
+        return colorData.color:WrapTextInColorCode(text)
     end
     return text
 end
