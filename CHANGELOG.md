@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Patch 12.1.5 compatibility: the addon no longer errors on load
+  (`Options.lua:13: attempt to call a nil value`). The removed global item APIs
+  (`GetItemQualityColor`, `GetItemInfo`, `GetItemInfoInstant`) are replaced by
+  their current equivalents.
+- Quality labels in the settings panel now honor the player's custom item
+  quality colors.
+
+### Changed
+- Updated the TOC interface version to 120105 (patch 12.1.5).
+
 ## [0.3.2] - 2026-09-25
 
 ### Fixed
