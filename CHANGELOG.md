@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-10-15
+
 ### Fixed
 - Patch 12.1.5 compatibility: the addon no longer errors on load
   (`Options.lua:13: attempt to call a nil value`). The removed global item APIs
